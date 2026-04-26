@@ -1,429 +1,184 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Knister Block Optik</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <style>
-    body { background: #180b09; font-family: Arial, sans-serif; margin: 0; padding: 0; }
-    .outer-wrap { display: flex; flex-direction: row; padding: 2px 0vw 2px 0vw; box-sizing: border-box; position: relative; }
-    .left-info {
-      background: linear-gradient(145deg, #460c0e 75%, #220f06 100%);
-      color: #fff; border-radius: 12px 0 0 12px; width: 164px; min-width: 110px; min-height: 60px;
-      box-shadow: 2px 2px 8px #0007;
-      margin-right: 1vw;
-      display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start;
-      padding: 6px 6px 2px 5px;
-      margin-bottom: 0; transition: margin-bottom 0.18s;
-    }
-    .left-info.min-gap { margin-bottom: 14px;}
-    .punkte-toggle-row { margin: 0; padding: 0; display: flex; align-items: center; gap: 7px; font-size: 13px; color: #ffcfb2; font-weight: bold; user-select: none; }
-    .rule-table { font-size: 15px; line-height: 1.3; margin-bottom: 2px; }
-    .rule-table td { padding: 0 4px 0 0; }
-    .hinweis-diag { color: #ffcfb2; font-size: 13.3px; margin: 0 0 2px 4px; letter-spacing: 0.2px; font-weight: bold; text-shadow: 1px 1px 12px #0006; padding: 0; }
-    .center-table-wrap {
-      background: #222; border-radius: 0 12px 12px 0; padding: 5px 3vw 5px 7px;
-      box-shadow: 2px 2px 8px #0008; display: flex; flex-direction: column; align-items: center; margin-top: 0;
-    }
-    .dice-toggle-row { width: 100%; display: flex; align-items: center; justify-content: flex-end;
-      margin-bottom: 4px; font-size: 16px; color: #fff; gap: 7px;}
-    .dice-panel { width: 100%; display: flex; flex-direction: column; align-items: center; margin-bottom: 6px;
-      transition: opacity 0.23s, height 0.23s;}
-    .dice-panel.hide { opacity: 0; height: 0; pointer-events: none; margin-bottom: 0 !important;}
-    .dice-row { display: flex; flex-direction: row; gap: 12px; margin-bottom: 8px; transition: opacity 0.2s;}
-    .dice-row.hide { opacity: 0; }
-    .dice {
-      background: #fff2ee; border: 2.7px solid #b62016; border-radius: 9px;
-      width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
-      box-shadow: 1.5px 1.5px 7px #0007 inset, 0 0 2px #700; font-size: 27px; color: #211006;
-      font-weight: bold; font-family: "Arial Rounded MT Bold", Arial, sans-serif; margin: 0 2px; transition: background 0.13s;
-    }
-    .dice-panel button {
-      background: linear-gradient(145deg, #f15d4e 55%, #78172B 100%);
-      color: #fff; font-size: 18px; padding: 7px 11px; border: 0; outline: none; border-radius: 9px;
-      font-weight: bold; margin-top: 0; letter-spacing: 1.3px; box-shadow: 0 0 6px #a01118c8; cursor: pointer;
-      transition: background 0.17s;
-    }
-    .dice-panel button:active { background: linear-gradient(145deg, #b50a05 40%, #be5371 90%); }
-    table.knister { border-collapse: separate; border-spacing: 7px 3px; margin-bottom: 0; }
-    .knister td, .knister th { width: 36px; height: 36px; text-align: center;
-      background: #dff4fa; border-radius: 8px; box-shadow: 1px 1px 3px #3333; font-size: 17px;
-      padding: 0; position: relative; transition: background 0.22s;}
-    .diagonal-feld input { background: rgba(220,60,80,0.18) !important; }
-    .knister input {
-      width: 28px; height: 25px; border: 1.5px solid #2a3a48; border-radius: 6px;
-      text-align: center; font-size: 15px; background: #fff; color: #036; outline: none; margin: 0;
-      transition: border-color 0.12s;
-    }
-    .knister input:focus { border-color: #16c7c7; }
-    td.punkte, th.punkte {
-      background: #511c18 !important; color: #fff; font-weight: bold; font-size: 16px; border-radius: 8px;
-      width: 37px; min-width: 23px; max-width: 44px; box-shadow: 0 0 6px #3336 inset; cursor: default; padding: 0;
-    }
-    tr:last-child .punkte { margin-top: 2px; }
-    .punkt-row-flex {
-      display: flex; flex-direction: row; gap: 16px; align-items: center; justify-content: center; margin-top: 10px;
-    }
-    .punkt-label { color: #b1eaff; font-size: 15px; font-weight: bold; margin-right: 3px; letter-spacing: 0.7px; }
-    .punkt-box {
-      color: #fff; background: #a02; border-radius: 7px; font-weight: bold; font-size: 21px;
-      letter-spacing: 1px; min-width: 45px; text-align: center;
-      box-shadow: 1px 1px 9px #703a2a40 inset; padding: 2px 11px; display: inline-block;
-    }
-    .gesamt-row-flex { width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 6px; gap: 10px;}
-    .gesamt-label { color: #b1eaff; font-size: 15px; font-weight: bold; margin-right: 7px; letter-spacing: 0.5px; vertical-align: middle;}
-    .gesamt-box {
-      color: #fff; background: #a02; border-radius: 7px; font-weight: bold; font-size: 21px;
-      letter-spacing: 1px; min-width: 45px; text-align: center;
-      box-shadow: 1px 1px 9px #703a2a40 inset; padding: 2px 11px; display: inline-block;
-    }
-    .clear-btn {
-      margin-left: 7px; padding: 5px 15px;
-      font-size: 15px; border: none; border-radius: 8px;
-      background: linear-gradient(145deg, #cf3931 55%, #78172B 100%);
-      color: #fff; font-weight: bold; box-shadow: 0 0 6px #a01118c8; cursor: pointer;
-      transition: background 0.17s; outline: none;
-    }
-    .clear-btn:active { background: linear-gradient(145deg, #b50a05 40%, #be5371 90%); }
-    /* Konfetti & Feuerwerk */
-    #knister-konfetti, #knister-firework {
-      pointer-events: none; position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; z-index: 9999;
-    }
-    .confetti, .emoji-burst {
-      position: absolute; font-size: 42px; opacity: 0.85; will-change: transform, opacity;
-      animation: konfetti-fly 1.9s cubic-bezier(.10,1.15,.85,.95) forwards;
-    }
-    @keyframes konfetti-fly {
-      0% { opacity:1; transform: translate(0,0) scale(1);}
-      65% { opacity:1;}
-      100% { opacity:0; transform: translate(var(--dx,0),var(--dy,140px)) scale(0.7);}
-    }
-    .fire-explode { font-size: 44px; animation: emoji-burst 1.5s ease; position: absolute;}
-    @keyframes emoji-burst {
-      0% {opacity:0; transform: scale(0) translateY(0);}
-      10%{opacity:1;}
-      50% {opacity:1;}
-      100%{opacity:0; transform: scale(2.2) translateY(-100px);}
-    }
-    .switch { position: relative; display: inline-block; width: 44px; height: 23px; margin-right: 3px; vertical-align: middle;}
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #888; transition: .2s; border-radius: 23px;}
-    .slider:before {position: absolute; content: ""; height: 17px; width: 17px; left: 3px; bottom: 3px; background-color: #fff; transition: .2s; border-radius: 50%;}
-    input:checked + .slider { background-color: #c22; }
-    input:checked + .slider:before { transform: translateX(21px);}
-    @media (max-width:900px) {
-      .outer-wrap { flex-direction: column; align-items: stretch; }
-      .left-info { border-radius: 12px 12px 0 0; margin-right: 0; width: 98vw; }
-      .center-table-wrap { border-radius: 0 0 12px 12px; width: 98vw; padding: 4px 1vw 5px 1vw;}
-      .punkt-box, .gesamt-box { font-size: 17px; padding: 2px 7px; min-width: 27px;}
-      .punkt-row-flex { margin-top: 7px }
-      .left-info.min-gap { margin-bottom: 7px; }
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kernaufgaben 1×1 Trainer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="outer-wrap">
-    <div class="left-info" id="rules-box">
-      <div style="font-size: 23px; margin-bottom:4px;">
-        🎲 <b>KNISTER</b>
-      </div>
-      <div class="punkte-toggle-row">
-        <label>
-          <input type="checkbox" id="punkte-toggle" checked> Punkteübersicht anzeigen
-        </label>
-      </div>
-      <div id="punkte-regeln" style="margin-bottom:0;">
-        <table class="rule-table">
-          <tr><td>2er</td><td>=</td><td>1</td></tr>
-          <tr><td>3er</td><td>=</td><td>3</td></tr>
-          <tr><td>4er</td><td>=</td><td>6</td></tr>
-          <tr><td>5er</td><td>=</td><td>10</td></tr>
-          <tr><td>2er + 2er</td><td>=</td><td>3</td></tr>
-          <tr><td>Full House</td><td>=</td><td>8</td></tr>
-          <tr><td>Str <span style="color:#16a34a;">7</span></td><td>=</td><td>8</td></tr>
-          <tr><td>Str <span style="color:#df151a;text-decoration:underline wavy">x</span></td><td>=</td><td>12</td></tr>
-        </table>
-      </div>
-    </div>
-    <div class="center-table-wrap">
-        <div class="hinweis-diag">Diagonale Linien bringen doppelte Punkte.</div>
-        <div class="dice-toggle-row">
-          <label>Würfel anzeigen
-          <span class="switch">
-            <input type="checkbox" id="dice-toggle" checked>
-            <span class="slider"></span>
-          </span>
-          </label>
+  <a class="skip-link" href="#main">Direkt zum Trainer</a>
+
+  <div class="page">
+    <header class="topbar panel">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">🧮</div>
+        <div class="brand-text">
+          <strong>1×1 Mathe-Trainer</strong>
+          <span>Kernaufgaben, kleines 1×1 oder großes 1×1 🌟</span>
         </div>
-        <div class="dice-panel" id="dice-panel">
-          <div class="dice-row" id="dice-row">
-            <span class="dice" id="dice1">⚀</span>
-            <span class="dice" id="dice2">⚁</span>
+      </div>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Modus wechseln">🌙</button>
+    </header>
+
+    <main id="main">
+      <section class="hero">
+        <article class="hero-main panel bounce-in">
+          <div class="eyebrow">🚀 Rechnen mit Spaß</div>
+          <h1>Wähle deinen Modus<br>und leg los! ✨</h1>
+          <p>Du kannst nur Kernaufgaben üben, alle Aufgaben aus dem kleinen 1×1 rechnen oder sogar das große 1×1 trainieren. Jede Runde hat 30 verschiedene Aufgaben, misst die Zeit und rechnet Fehler als Strafsekunden dazu.</p>
+          <div class="fun-badges" aria-label="Eigenschaften">
+            <div class="fun-badge">🎯 30 verschiedene Aufgaben</div>
+            <div class="fun-badge">⏱️ Zeitmessung</div>
+            <div class="fun-badge">➕ 10 Strafsekunden</div>
+            <div class="fun-badge">🏆 Highscore mit Name</div>
           </div>
-          <button onclick="rollDice()">Würfeln</button>
-        </div>
-        <table class="knister">
-          <tbody id="knister-body"></tbody>
-          <tfoot>
-            <tr id="spaltenpunkte-row"></tr>
-          </tfoot>
-        </table>
-        <div class="punkt-row-flex">
-          <span>
-            <span class="punkt-label">Diagonal ↘️</span>
-            <span class="punkt-box" id="diag1x2">-</span>
-          </span>
-          <span>
-            <span class="punkt-label">Diagonal ↙️</span>
-            <span class="punkt-box" id="diag2x2">-</span>
-          </span>
-        </div>
-        <div class="gesamt-row-flex">
-          <span class="gesamt-label">Gesamt</span>
-          <span class="gesamt-box" id="gesamt">-</span>
-          <button class="clear-btn" onclick="clearBoard()">Neue Runde</button>
-        </div>
-    </div>
-    <div id="knister-konfetti"></div>
-    <div id="knister-firework"></div>
+        </article>
+
+        <aside class="hero-side panel">
+          <div>
+            <h2>Trainingsmodus 😊</h2>
+            <p>Standard ist der Kernaufgaben-Modus. Du kannst aber jederzeit auf alle Aufgaben des kleinen 1×1 oder auf das große 1×1 umschalten.</p>
+          </div>
+
+          <div class="mode-grid" role="radiogroup" aria-label="Trainingsmodus wählen">
+            <label class="mode-card active">
+              <input type="radio" name="mode" value="core" checked />
+              <span class="mode-icon">🌟</span>
+              <strong>Kernaufgaben</strong>
+              <small>nur ×1, ×2, ×5, ×10</small>
+            </label>
+
+            <label class="mode-card">
+              <input type="radio" name="mode" value="small" />
+              <span class="mode-icon">📘</span>
+              <strong>Kleines 1×1</strong>
+              <small>alle Aufgaben von 1 bis 10</small>
+            </label>
+
+            <label class="mode-card">
+              <input type="radio" name="mode" value="large" />
+              <span class="mode-icon">🔥</span>
+              <strong>Großes 1×1</strong>
+              <small>alle Aufgaben von 1 bis 20</small>
+            </label>
+          </div>
+        </aside>
+      </section>
+
+      <section class="layout" aria-label="Rechentrainer und Infos">
+        <section class="quiz-card panel" aria-labelledby="trainer-title">
+          <h2 id="trainer-title">Dein Rundlauf ✨</h2>
+          <p id="modeDescription">Aktiv: Kernaufgaben mit ×1, ×2, ×5 und ×10.</p>
+
+          <div class="player-row">
+            <label class="name-field" for="playerName">
+              <span>Dein Name für den Highscore 🏷️</span>
+              <input id="playerName" type="text" maxlength="16" placeholder="z. B. Mia" autocomplete="nickname" />
+            </label>
+          </div>
+
+          <div class="status-row" aria-label="Aktueller Stand">
+            <div class="status-pill">
+              <span>Modus</span>
+              <strong id="modeValue">Kern</strong>
+            </div>
+            <div class="status-pill">
+              <span>Aufgabe</span>
+              <strong id="progressValue">0 / 30</strong>
+            </div>
+            <div class="status-pill">
+              <span>Zeit</span>
+              <strong id="timeValue">00:00</strong>
+            </div>
+            <div class="status-pill">
+              <span>Fehler</span>
+              <strong id="errorsValue">0</strong>
+            </div>
+            <div class="status-pill">
+              <span>Strafzeit</span>
+              <strong id="penaltyValue">0 s</strong>
+            </div>
+          </div>
+
+          <div class="question-wrap" id="questionWrap">
+            <div class="question-label">Aktuelle Aufgabe</div>
+            <div class="question" id="questionText">Drücke auf Start 🎈</div>
+
+            <form class="answer-form" id="answerForm" autocomplete="off">
+              <label class="sr-only" for="answerInput">Antwort</label>
+              <input id="answerInput" class="answer-input" type="number" inputmode="numeric" placeholder="Antwort" disabled />
+              <button class="primary-btn" id="submitBtn" type="submit" disabled>Antwort prüfen</button>
+            </form>
+
+            <div class="button-row">
+              <button class="secondary-btn" type="button" id="startBtn">Runde starten 🎉</button>
+              <button class="ghost-btn" type="button" id="restartBtn">Neu mischen 🔄</button>
+            </div>
+          </div>
+
+          <div class="feedback" id="feedbackBox" aria-live="polite">Bereit? Dann starte deine Mathe-Mission! 🌈</div>
+
+          <section class="results" id="resultsBox" aria-live="polite">
+            <h2>Dein Ergebnis 🌟</h2>
+            <div id="gradeBadge" class="grade-badge grade-3">⭐ Note 3</div>
+
+            <div class="results-grid">
+              <div class="result-box">
+                <span>Reine Zeit</span>
+                <strong id="rawTimeResult">00:00</strong>
+              </div>
+              <div class="result-box">
+                <span>Zeit mit Strafsekunden</span>
+                <strong id="finalTimeResult">00:00</strong>
+              </div>
+              <div class="result-box">
+                <span>Richtige Antworten</span>
+                <strong id="correctResult">0 von 30</strong>
+              </div>
+              <div class="result-box">
+                <span>Highscore-Punkte</span>
+                <strong id="scoreResult">0</strong>
+              </div>
+            </div>
+
+            <div class="motivation" id="motivationText">Super gemacht! Weiter so! 💪</div>
+            <div class="note" id="gradingInfo">Bewertung: Fehler wiegen stärker als Zeit, aber schnelles Rechnen wird zusätzlich belohnt.</div>
+
+            <section class="mistakes-box" id="mistakesBox">
+              <h3>Zum Nachschauen 📝</h3>
+              <p>Hier siehst du alle Aufgaben, die noch nicht richtig waren.</p>
+              <div id="mistakesList" class="mistakes-list"></div>
+            </section>
+          </section>
+        </section>
+
+        <aside class="sidebar-stack">
+          <section class="sidebar-card panel">
+            <h2>Highscore 🏆</h2>
+            <p>Es gibt eine Bestenliste pro Modus. So bleiben Kernaufgaben, kleines 1×1 und großes 1×1 fair getrennt.</p>
+            <div id="highscoreList" class="score-list" role="list"></div>
+          </section>
+
+          <section class="sidebar-card panel">
+            <h2>Modi 💡</h2>
+            <p>Du kannst den Modus vor dem Start ändern. Während einer laufenden Runde bleibt der gewählte Modus fix.</p>
+            <ul class="info-list" role="list">
+              <li class="info-item"><span aria-hidden="true">🌟</span><div><strong>Kernaufgaben</strong><small>nur ×1, ×2, ×5, ×10</small></div></li>
+              <li class="info-item"><span aria-hidden="true">📘</span><div><strong>Kleines 1×1</strong><small>alle Aufgaben von 1 bis 10</small></div></li>
+              <li class="info-item"><span aria-hidden="true">🔥</span><div><strong>Großes 1×1</strong><small>alle Aufgaben von 1 bis 20</small></div></li>
+            </ul>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <p class="footer-note">Viel Spaß beim Rechnen! 📚✨</p>
   </div>
-  <script>
-    const rulesBox = document.getElementById('rules-box');
-    document.getElementById('punkte-toggle').addEventListener('change', function() {
-      document.getElementById('punkte-regeln').style.display = this.checked ? '' : 'none';
-      if (this.checked) {
-        rulesBox.classList.remove('min-gap');
-      } else {
-        rulesBox.classList.add('min-gap');
-      }
-    });
 
-    function clearBoard() {
-      if (confirm("Möchtest du wirklich eine neue Runde starten? Alle Eingaben werden gelöscht.")) {
-        document.querySelectorAll('.knister input').forEach(inp => inp.value = '');
-        document.getElementById('gesamt').innerText = '-';
-        document.getElementById('diag1x2').innerText = '-';
-        document.getElementById('diag2x2').innerText = '-';
-        for(let i=0;i<5;i++) document.getElementById('row-pts-'+i).innerText = '-';
-        for(let j=0;j<5;j++) document.getElementById('col-pts-'+j).innerText = '-';
-      }
-    }
-
-    // Konfetti-Explosion in alle Richtungen!
-    function konfettiBurst(dom, x, y, emojilist=["🎉","✨","🥳","🎲","🟦","🟥"]) {
-      for(let i=0;i<22;i++) {
-        let span = document.createElement('span');
-        span.className = 'confetti';
-        span.textContent = emojilist[Math.floor(Math.random()*emojilist.length)];
-        let angle = Math.random() * 2 * Math.PI;
-        let distance = 120 + Math.random() * 170; // jetzt deutlich verbreitet
-        span.style.left = x + 'px';
-        span.style.top = y + 'px';
-        span.style.setProperty('--dx', (Math.cos(angle) * distance) + 'px');
-        span.style.setProperty('--dy', (Math.sin(angle) * distance + 120) + 'px');
-        span.style.fontSize = (22 + Math.random()*26) + "px";
-        dom.appendChild(span);
-        setTimeout(()=>span.remove(), 1960);
-      }
-    }
-    function fireworkShow() {
-      let dom = document.getElementById('knister-firework');
-      for (let i=0;i<18;i++) {
-        let s = document.createElement('span');
-        s.className = 'emoji-burst';
-        s.textContent = ["🎆","🎇","🔥","✨","🎉"][Math.floor(Math.random()*5)];
-        s.style.left = (8+Math.random()*84)+'vw';
-        s.style.top = (15+Math.random()*28)+'vh';
-        dom.appendChild(s);
-        setTimeout(()=>s.remove(), 1800);
-      }
-    }
-
-    const diceChars = ['⚀','⚁','⚂','⚃','⚄','⚅'];
-    let diceSum = 3;
-    let diceInputEnabled = true;
-    let lastFirework = false;
-
-    function rollDice() {
-      const row = document.getElementById('dice-row');
-      row.classList.add('hide');
-      setTimeout(() => {
-        const d1 = Math.floor(Math.random()*6)+1;
-        const d2 = Math.floor(Math.random()*6)+1;
-        document.getElementById('dice1').textContent = diceChars[d1-1];
-        document.getElementById('dice2').textContent = diceChars[d2-1];
-        diceSum = d1 + d2;
-        row.classList.remove('hide');
-      }, 300);
-    }
-    rollDice();
-
-    document.getElementById('dice-toggle').addEventListener('change', function() {
-      const panel = document.getElementById('dice-panel');
-      const enabled = this.checked;
-      panel.classList.toggle('hide', !enabled);
-      diceInputEnabled = enabled;
-    });
-
-    // Spielfeld
-    const tbody = document.getElementById('knister-body');
-    for(let i=0; i<5; i++) {
-      const tr = document.createElement('tr');
-      for(let j=0; j<5; j++) {
-        const td = document.createElement('td');
-        if (i === j || j === 4 - i) {
-          td.classList.add('diagonal-feld');
-        }
-        const inp = document.createElement('input');
-        inp.type = 'number'; inp.min = 2; inp.max = 12;
-        inp.setAttribute('data-row', i);
-        inp.setAttribute('data-col', j);
-        inp.addEventListener('focus', function(ev) {
-          if(diceInputEnabled && !inp.value) {
-            inp.value = diceSum;
-            updatePoints();
-            setTimeout(() => { inp.select(); }, 5);
-          }
-        });
-        td.appendChild(inp);
-        tr.appendChild(td);
-      }
-      const pointsTd = document.createElement('td');
-      pointsTd.className = 'punkte';
-      pointsTd.setAttribute('id', 'row-pts-' + i);
-      pointsTd.innerText = '-';
-      tr.appendChild(pointsTd);
-      tbody.appendChild(tr);
-    }
-    const spaltenpunkteRow = document.getElementById('spaltenpunkte-row');
-    for(let j=0;j<5;j++) {
-      const td = document.createElement('td');
-      td.className = 'punkte';
-      td.id = 'col-pts-' + j;
-      td.innerText = '-';
-      spaltenpunkteRow.appendChild(td);
-    }
-
-    // Helper für fertige Linien (wird für Konfetti nötigt)
-    function isRowFull(row) { return row.every(x=>!isNaN(x)); }
-
-    function evalRow(arr) {
-      arr = arr.map(Number).filter(n => !isNaN(n));
-      if (arr.length !== 5) return null;
-      arr.sort((a, b) => a - b);
-      let counts = {};
-      arr.forEach(n => counts[n] = (counts[n] || 0) + 1);
-      let vals = Object.values(counts).sort((a,b)=>b-a);
-      if(vals[0]===5) return 10;
-      if(vals[0]===4) return 6;
-      if(vals[0]===3 && vals[1]===2) return 8;
-      if(vals[0]===3) return 3;
-      if(vals[0]===2 && vals[1]===2) return 3;
-      if(vals[0]===2) return 1;
-      if(arr[1]===arr[0]+1 && arr[2]===arr[1]+1 && arr[3]===arr[2]+1 && arr[4]===arr[3]+1) return arr.includes(7) ? 8 : 12;
-      return 0;
-    }
-
-    // Zum Nachhalten, wo schon Konfetti war
-    let konfettiTriggerRows = {};
-    let konfettiTriggerCols = {};
-    let konfettiTriggerDiag1 = false, konfettiTriggerDiag2 = false;
-
-    function updatePoints() {
-      const grid = [];
-      let gesamt = 0;
-      // Zeilen
-      for(let i=0;i<5;i++){
-        grid[i]=[];
-        for(let j=0;j<5;j++){
-          const v = document.querySelector(`input[data-row="${i}"][data-col="${j}"]`).value;
-          grid[i][j] = v.trim() ? Number(v) : NaN;
-        }
-        let row = grid[i];
-        if(isRowFull(row)) {
-          const pts = evalRow(row);
-          document.getElementById('row-pts-' + i).innerText = pts;
-          if(typeof pts==='number') gesamt+=pts;
-          if(pts>0 && !konfettiTriggerRows[i]) {
-            let elm = document.querySelector(`input[data-row="${i}"][data-col="2"]`);
-            let box = document.getElementById('knister-konfetti');
-            if(elm && box) {
-              let rect = elm.getBoundingClientRect();
-              konfettiBurst(box, rect.x+rect.width/2, rect.y+3);
-            }
-            konfettiTriggerRows[i] = true;
-          }
-        } else {
-          document.getElementById('row-pts-' + i).innerText = '-';
-          konfettiTriggerRows[i] = false;
-        }
-      }
-      // Spalten
-      for(let j=0;j<5;j++) {
-        let colArr = [grid[0][j], grid[1][j], grid[2][j], grid[3][j], grid[4][j]];
-        if(isRowFull(colArr)) {
-          const pts = evalRow(colArr);
-          document.getElementById('col-pts-' + j).innerText = pts;
-          if(typeof pts==='number') gesamt+=pts;
-          if(pts>0 && !konfettiTriggerCols[j]) {
-            let elm = document.querySelector(`input[data-row="2"][data-col="${j}"]`);
-            let box = document.getElementById('knister-konfetti');
-            if(elm && box) {
-              let rect = elm.getBoundingClientRect();
-              konfettiBurst(box, rect.x+rect.width/2, rect.y+10);
-            }
-            konfettiTriggerCols[j] = true;
-          }
-        } else {
-          document.getElementById('col-pts-' + j).innerText = '-';
-          konfettiTriggerCols[j] = false;
-        }
-      }
-      // Diagonalen
-      let diag1 = [], diag2 = [], diag1valid = true, diag2valid = true;
-      for(let k=0; k<5; k++) {
-        diag1.push(grid[k][k]); diag2.push(grid[k][4-k]);
-        if(isNaN(grid[k][k])) diag1valid = false;
-        if(isNaN(grid[k][4-k])) diag2valid = false;
-      }
-      let d1 = diag1valid ? evalRow(diag1) : null, d2 = diag2valid ? evalRow(diag2) : null;
-      document.getElementById('diag1x2').innerText = d1 === null ? '-' : (d1*2);
-      document.getElementById('diag2x2').innerText = d2 === null ? '-' : (d2*2);
-      if(diag1valid && typeof d1==='number') {
-        gesamt += d1*2;
-        if(d1>0 && !konfettiTriggerDiag1) {
-          let elm = document.querySelector(`input[data-row="2"][data-col="2"]`);
-          let box = document.getElementById('knister-konfetti');
-          if(elm && box) {
-            let rect = elm.getBoundingClientRect();
-            konfettiBurst(box, rect.x+rect.width/2, rect.y-10);
-          }
-          konfettiTriggerDiag1 = true;
-        }
-      } else { konfettiTriggerDiag1=false; }
-      if(diag2valid && typeof d2==='number') {
-        gesamt += d2*2;
-        if(d2>0 && !konfettiTriggerDiag2) {
-          let elm = document.querySelector(`input[data-row="2"][data-col="2"]`);
-          let box = document.getElementById('knister-konfetti');
-          if(elm && box) {
-            let rect = elm.getBoundingClientRect();
-            konfettiBurst(box, rect.x+rect.width/2, rect.y-24);
-          }
-          konfettiTriggerDiag2 = true;
-        }
-      } else { konfettiTriggerDiag2=false; }
-      document.getElementById('gesamt').innerText = gesamt;
-
-      // Emoji-Feuerwerk ab 50+
-      if(gesamt>50 && !lastFirework) {
-        fireworkShow(); lastFirework=true;
-      }
-      if(gesamt<=50) lastFirework = false;
-    }
-    document.querySelectorAll('input').forEach(inp => {
-      inp.addEventListener('input', updatePoints);
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
