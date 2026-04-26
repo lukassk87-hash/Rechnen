@@ -65,5 +65,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Knister.apk
+          name: Rechnen.apk
           path: android/app/build/outputs/apk/debug/*.apk
