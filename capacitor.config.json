@@ -1,0 +1,6 @@
+{
+  "appId": "de.knister.app",
+  "appName": "knister",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}
