@@ -1,0 +1,6 @@
+{
+  "appId": "de.lukas.pokemon",
+  "appName": "Pokemon Superversion",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}

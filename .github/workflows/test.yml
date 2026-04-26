@@ -1,0 +1,121 @@
+name: Test Workflow
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show root
+        run: |
+          echo "Root directory:"
+          ls -la
+
+      - name: Ensure www/index.html exists
+        run: |
+          mkdir -p www
+          ls -la www
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install npm dependencies
+        run: |
+          npm install --no-audit --no-fund
+
+      - name: Build web assets (if script exists)
+        run: |
+          if grep -q "\"build\"" package.json; then
+            npm run build || true
+          fi
+          ls -la www
+
+      - name: Install Capacitor CLI
+        run: npm install @capacitor/cli @capacitor/core --no-save
+
+      - name: Ensure android folder exists
+        run: |
+          if [ ! -d android ]; then
+            npx cap add android
+          fi
+
+      - name: Sync Capacitor
+        run: |
+          npx cap sync android
+          ls -la android/app/src/main/assets || true
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install Android SDK
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y unzip wget
+
+          export ANDROID_SDK_ROOT=$HOME/android-sdk
+          mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
+          cd $ANDROID_SDK_ROOT/cmdline-tools
+
+          # Download commandline tools
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O tools.zip
+          unzip -q tools.zip
+
+          # Fix directory structure (Ubuntu 24.04 runner issue)
+          mv cmdline-tools latest
+
+          # Install required SDK components
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT \
+            "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
+
+      - name: Install Gradle
+        run: |
+          sudo apt-get install -y gradle || true
+          gradle --version || true
+
+      - name: Build APK
+        run: |
+          mkdir -p build-logs
+          cd android
+          gradle :app:assembleDebug --stacktrace --info 2>&1 | tee ../build-logs/app.log || true
+          gradle assembleDebug --stacktrace --info 2>&1 | tee ../build-logs/root.log || true
+
+      - name: Find APK
+        id: apk
+        run: |
+          APK=$(find android -type f -name "*.apk" | head -n 1 || true)
+          if [ -n "$APK" ]; then
+            echo "apk_path=$APK" >> $GITHUB_OUTPUT
+            echo "Found APK: $APK"
+          else
+            echo "No APK found"
+          fi
+
+      - name: Upload build logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: build-logs
+
+      - name: Upload APK
+        if: steps.apk.outputs.apk_path
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug.apk
+          path: ${{ steps.apk.outputs.apk_path }}
