@@ -1,6 +1,6 @@
 {
-  "appId": "de.knister.app",
-  "appName": "knister",
+  "appId": "de.rechnen.app",
+  "appName": "Rechnen",
   "webDir": "www",
   "bundledWebRuntime": false
 }
