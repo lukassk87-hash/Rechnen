@@ -2,29 +2,26 @@
   const TOTAL_QUESTIONS = 30;
   const PENALTY_SECONDS = 10;
   const HIGHSCORE_LIMIT = 5;
-  const STORAGE_KEY = 'math-trainer-highscores-v3';
+  const STORAGE_KEY = 'math-trainer-highscores-v4';
 
   const MODES = {
-    core: {
-      label: 'Kern',
-      title: 'Kernaufgaben',
-      description: 'Aktiv: Kernaufgaben mit ×1, ×2, ×5 und ×10.',
-      bank: () => buildCoreBank()
-    },
-    small: {
-      label: 'Klein',
-      title: 'Kleines 1×1',
-      description: 'Aktiv: alle Aufgaben des kleinen 1×1 von 1 bis 10.',
-      bank: () => buildRangeBank(1, 10)
-    },
-    large: {
-      label: 'Groß',
-      title: 'Großes 1×1',
-      description: 'Aktiv: alle Aufgaben des großen 1×1 von 1 bis 20.',
-      bank: () => buildRangeBank(1, 20)
-    }
+    core:        { label: 'Kern ×',      title: 'Kernaufgaben ×',        description: 'Aktiv: Kernaufgaben mit ×1, ×2, ×5 und ×10.' },
+    core_div:    { label: 'Kern ÷',      title: 'Kernaufgaben ÷',        description: 'Aktiv: Kernaufgaben als Division mit ÷1, ÷2, ÷5 und ÷10.' },
+    core_mix:    { label: 'Kern gemischt', title: 'Kernaufgaben gemischt', description: 'Aktiv: Kernaufgaben gemischt – × und ÷ zufällig.' },
+
+    small:       { label: 'Klein ×',     title: 'Kleines 1×1 ×',         description: 'Aktiv: alle Malaufgaben des kleinen 1×1 von 1 bis 10.' },
+    small_div:   { label: 'Klein ÷',     title: 'Kleines 1×1 ÷',         description: 'Aktiv: alle Divisionsaufgaben des kleinen 1×1 von 1 bis 10.' },
+    small_mix:   { label: 'Klein gemischt', title: 'Kleines 1×1 gemischt', description: 'Aktiv: kleines 1×1 gemischt – × und ÷ zufällig.' },
+
+    large:       { label: 'Groß ×',      title: 'Großes 1×1 ×',          description: 'Aktiv: alle Malaufgaben des großen 1×1 von 1 bis 20.' },
+    large_div:   { label: 'Groß ÷',      title: 'Großes 1×1 ÷',          description: 'Aktiv: alle Divisionsaufgaben des großen 1×1 von 1 bis 20.' },
+    large_mix:   { label: 'Groß gemischt', title: 'Großes 1×1 gemischt', description: 'Aktiv: großes 1×1 gemischt – × und ÷ zufällig.' },
+
+    row_mul:     { label: 'Reihe ×',     title: 'Gezielte Malreihe',     description: 'Aktiv: gezielte Malreihe mit dem gewählten Faktor (1–10), andere Faktoren zufällig 1–10.' },
+    row_div:     { label: 'Reihe ÷',     title: 'Gezielte Divisionsreihe', description: 'Aktiv: gezielte Divisionsreihe mit dem gewählten Divisor (1–10), Dividend zufällig 1× bis 10×.' }
   };
 
+  // ---------- Theme ----------
   const themeToggle = document.querySelector('[data-theme-toggle]');
   const root = document.documentElement;
   let currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -35,7 +32,12 @@
     root.setAttribute('data-theme', currentTheme);
     syncThemeToggle();
   });
+  function syncThemeToggle() {
+    themeToggle.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+    themeToggle.setAttribute('aria-label', currentTheme === 'dark' ? 'Hellen Modus aktivieren' : 'Dunklen Modus aktivieren');
+  }
 
+  // ---------- DOM ----------
   const modeInputs = [...document.querySelectorAll('input[name="mode"]')];
   const modeCards = [...document.querySelectorAll('.mode-card')];
   const modeDescription = document.getElementById('modeDescription');
@@ -63,7 +65,10 @@
   const highscoreList = document.getElementById('highscoreList');
   const questionWrap = document.getElementById('questionWrap');
   const mistakesList = document.getElementById('mistakesList');
+  const rowPicker = document.getElementById('rowPicker');
+  const rowSelect = document.getElementById('rowSelect');
 
+  // ---------- State ----------
   let round = resetRound();
   let timer = null;
   let highscores = loadHighscores();
@@ -72,19 +77,26 @@
   syncQuestion();
   syncView();
 
+  // ---------- Events ----------
   modeInputs.forEach(input => input.addEventListener('change', () => {
     if (round.active) return;
     round.mode = input.value;
     syncModeUI();
     renderHighscores();
   }));
+  rowSelect.addEventListener('change', () => {
+    if (round.active) return;
+    syncModeUI();
+  });
   startBtn.addEventListener('click', startRound);
   restartBtn.addEventListener('click', restartRound);
   answerForm.addEventListener('submit', submitAnswer);
 
+  // ---------- Helpers ----------
   function resetRound() {
     return {
       mode: getSelectedMode(),
+      row: getSelectedRow(),
       tasks: [],
       index: 0,
       errors: 0,
@@ -93,7 +105,8 @@
       startedAt: null,
       elapsedSeconds: 0,
       active: false,
-      finished: false
+      finished: false,
+      totalQuestions: TOTAL_QUESTIONS
     };
   }
 
@@ -101,9 +114,8 @@
     return modeInputs.find(input => input.checked)?.value || 'core';
   }
 
-  function syncThemeToggle() {
-    themeToggle.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
-    themeToggle.setAttribute('aria-label', currentTheme === 'dark' ? 'Hellen Modus aktivieren' : 'Dunklen Modus aktivieren');
+  function getSelectedRow() {
+    return Number(rowSelect.value) || 1;
   }
 
   function syncModeUI() {
@@ -114,64 +126,137 @@
     const mode = MODES[getSelectedMode()];
     modeDescription.textContent = mode.description;
     modeValue.textContent = mode.label;
+
+    const isRowMode = getSelectedMode() === 'row_mul' || getSelectedMode() === 'row_div';
+    rowPicker.hidden = !isRowMode;
   }
 
-  function buildCoreBank() {
-    return uniqueTasks(buildLimitedBank([1, 2, 5, 10], 10));
-  }
-
-  function buildRangeBank(min, max) {
+  // ---------- Task builders ----------
+  function buildMultiplicationBank(min, max) {
     const tasks = [];
     for (let a = min; a <= max; a += 1) {
       for (let b = min; b <= max; b += 1) {
-        tasks.push({ a, b, answer: a * b });
+        tasks.push({ a, b, answer: a * b, op: 'mul' });
       }
     }
     return uniqueTasks(tasks);
   }
 
-  function buildLimitedBank(multipliers, limit) {
+  function buildDivisionBank(min, max) {
     const tasks = [];
-    multipliers.forEach(multiplier => {
-      for (let factor = 1; factor <= limit; factor += 1) {
-        tasks.push({ a: factor, b: multiplier, answer: factor * multiplier });
-        tasks.push({ a: multiplier, b: factor, answer: factor * multiplier });
+    for (let divisor = min; divisor <= max; divisor += 1) {
+      for (let factor = min; factor <= max; factor += 1) {
+        const dividend = divisor * factor;
+        tasks.push({ a: dividend, b: divisor, answer: factor, op: 'div' });
       }
-    });
-    return tasks;
+    }
+    return uniqueTasks(tasks);
+  }
+
+  function buildMixedBank(min, max) {
+    return uniqueTasks([...buildMultiplicationBank(min, max), ...buildDivisionBank(min, max)]);
+  }
+
+  function buildCoreMul() {
+    return uniqueTasks(buildMultiplicationBank(1, 10).filter(t => [1, 2, 5, 10].includes(t.b) || [1, 2, 5, 10].includes(t.a)));
+  }
+  function buildCoreDiv() {
+    return uniqueTasks(buildDivisionBank(1, 10).filter(t => [1, 2, 5, 10].includes(t.b)));
+  }
+  function buildCoreMix() {
+    return uniqueTasks([...buildCoreMul(), ...buildCoreDiv()]);
+  }
+
+  // Gezielte Reihe: jede Aufgabe enthält min. 1× den Faktor
+  function buildRowMul(row) {
+    const tasks = [];
+    for (let n = 1; n <= 10; n += 1) {
+      tasks.push({ a: row, b: n, answer: row * n, op: 'mul' });
+      tasks.push({ a: n, b: row, answer: row * n, op: 'mul' });
+    }
+    return uniqueTasks(tasks);
+  }
+
+  function buildRowDiv(row) {
+    const tasks = [];
+    for (let n = 1; n <= 10; n += 1) {
+      tasks.push({ a: row * n, b: row, answer: n, op: 'div' });
+    }
+    return uniqueTasks(tasks);
   }
 
   function uniqueTasks(tasks) {
     const seen = new Set();
     return tasks.filter(task => {
-      const key = `${task.a}x${task.b}`;
+      const key = `${task.a}${task.op}${task.b}`;
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
     });
   }
 
-  function sampleTasks(modeKey) {
-    const pool = [...MODES[modeKey].bank()];
-    if (pool.length < TOTAL_QUESTIONS) {
-      throw new Error('Zu wenige Aufgaben im Aufgabenpool.');
+  function getBankForMode(modeKey, row) {
+    switch (modeKey) {
+      case 'core':      return buildCoreMul();
+      case 'core_div':  return buildCoreDiv();
+      case 'core_mix':  return buildCoreMix();
+      case 'small':     return buildMultiplicationBank(1, 10);
+      case 'small_div': return buildDivisionBank(1, 10);
+      case 'small_mix': return buildMixedBank(1, 10);
+      case 'large':     return buildMultiplicationBank(1, 20);
+      case 'large_div': return buildDivisionBank(1, 20);
+      case 'large_mix': return buildMixedBank(1, 20);
+      case 'row_mul':   return buildRowMul(row);
+      case 'row_div':   return buildRowDiv(row);
+      default:          return buildCoreMul();
     }
+  }
+
+  function sampleTasks(modeKey, row) {
+    const pool = [...getBankForMode(modeKey, row)];
+    if (!pool.length) throw new Error('Leerer Aufgabenpool.');
+
+    const target = Math.min(TOTAL_QUESTIONS, pool.length);
     const selected = [];
-    while (selected.length < TOTAL_QUESTIONS) {
-      const index = Math.floor(Math.random() * pool.length);
-      const task = pool.splice(index, 1)[0];
-      if (task) selected.push(task);
+
+    // Fisher-Yates
+    for (let i = pool.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
     }
+    for (let i = 0; i < target; i += 1) selected.push(pool[i]);
+
+    // Falls Pool kleiner als 30: Wiederholungen durcheinander auffüllen
+    while (selected.length < TOTAL_QUESTIONS) {
+      const t = pool[Math.floor(Math.random() * pool.length)];
+      selected.push({ ...t, _repeat: true });
+    }
+
+    // Endgültig mischen
+    for (let i = selected.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [selected[i], selected[j]] = [selected[j], selected[i]];
+    }
+
     return selected;
   }
 
+  // ---------- Round flow ----------
   function startRound() {
     round = resetRound();
     round.mode = getSelectedMode();
-    round.tasks = sampleTasks(round.mode);
+    round.row = getSelectedRow();
+    try {
+      round.tasks = sampleTasks(round.mode, round.row);
+    } catch (e) {
+      feedback('Ups! Der Aufgabenpool ist leer. Wähle einen anderen Modus.', 'error');
+      return;
+    }
+    round.totalQuestions = round.tasks.length;
     round.startedAt = performance.now();
     round.active = true;
     round.finished = false;
+
     resultsBox.classList.remove('show');
     mistakesList.innerHTML = '';
     answerInput.disabled = false;
@@ -179,11 +264,14 @@
     startBtn.disabled = true;
     playerName.disabled = true;
     modeInputs.forEach(input => input.disabled = true);
+    rowSelect.disabled = true;
+
     feedback(`Los geht's im Modus ${MODES[round.mode].title}! 🥳`, '');
     syncQuestion();
     syncView();
     answerInput.value = '';
     answerInput.focus();
+
     clearInterval(timer);
     timer = setInterval(() => {
       if (!round.active) return;
@@ -201,6 +289,7 @@
     startBtn.disabled = false;
     playerName.disabled = false;
     modeInputs.forEach(input => input.disabled = false);
+    rowSelect.disabled = false;
     resultsBox.classList.remove('show');
     feedback('Neue Runde bereit. Such dir einen Modus aus und starte! 🎈', '');
     mistakesList.innerHTML = '';
@@ -220,7 +309,12 @@
       return;
     }
     const current = round.tasks[round.index];
-    questionText.textContent = `${current.a} × ${current.b} = ?`;
+    questionText.textContent = formatTask(current);
+  }
+
+  function formatTask(task) {
+    if (task.op === 'div') return `${task.a} ÷ ${task.b} = ?`;
+    return `${task.a} × ${task.b} = ?`;
   }
 
   function submitAnswer(event) {
@@ -249,11 +343,11 @@
     } else {
       round.errors += 1;
       round.mistakes.push({
-        task: `${current.a} × ${current.b}`,
+        task: formatTask(current).replace(' = ?', ''),
         correctAnswer: current.answer,
         givenAnswer: raw
       });
-      feedback(`Fast! ${current.a} × ${current.b} = ${current.answer}. Weiter geht's! 💛`, 'error');
+      feedback(`Fast! ${formatTask(current).replace(' = ?', '')} = ${current.answer}. Weiter geht's! 💛`, 'error');
       questionWrap.classList.remove('shake');
       void questionWrap.offsetWidth;
       questionWrap.classList.add('shake');
@@ -262,7 +356,7 @@
     round.index += 1;
     answerInput.value = '';
 
-    if (round.index >= TOTAL_QUESTIONS) {
+    if (round.index >= round.totalQuestions) {
       finishRound();
       return;
     }
@@ -282,14 +376,16 @@
     startBtn.disabled = false;
     playerName.disabled = false;
     modeInputs.forEach(input => input.disabled = false);
+    rowSelect.disabled = false;
     syncQuestion();
     syncView();
 
     const finalSeconds = round.elapsedSeconds + round.errors * PENALTY_SECONDS;
-    const metrics = evaluateRound(round.correct, round.errors, finalSeconds, round.mode);
+    const metrics = evaluateRound(round.correct, round.errors, finalSeconds, round.mode, round.totalQuestions);
+
     rawTimeResult.textContent = formatTime(round.elapsedSeconds);
     finalTimeResult.textContent = formatTime(finalSeconds);
-    correctResult.textContent = `${round.correct} von ${TOTAL_QUESTIONS}`;
+    correctResult.textContent = `${round.correct} von ${round.totalQuestions}`;
     scoreResult.textContent = String(metrics.score);
     gradeBadge.textContent = `${metrics.emoji} Note ${metrics.grade}`;
     gradeBadge.className = `grade-badge grade-${metrics.grade}`;
@@ -316,8 +412,9 @@
     `).join('');
   }
 
-  function evaluateRound(correct, errors, finalSeconds, modeKey) {
-    const errorPercent = Math.round((errors / TOTAL_QUESTIONS) * 100);
+  // ---------- Evaluation ----------
+  function evaluateRound(correct, errors, finalSeconds, modeKey, total) {
+    const errorPercent = Math.round((errors / total) * 100);
     let errorScore;
     if (errorPercent <= 3) errorScore = 100;
     else if (errorPercent <= 7) errorScore = 92;
@@ -327,43 +424,46 @@
     else errorScore = 30;
 
     const timeThresholds = {
-      core: [120, 180, 240, 300, 390],
-      small: [150, 210, 270, 340, 430],
-      large: [210, 300, 390, 500, 620]
-    }[modeKey];
+      core:      [120, 180, 240, 300, 390],
+      core_div:  [120, 180, 240, 300, 390],
+      core_mix:  [150, 210, 280, 350, 440],
+      small:     [150, 210, 270, 340, 430],
+      small_div: [150, 210, 270, 340, 430],
+      small_mix: [170, 230, 300, 370, 460],
+      large:     [210, 300, 390, 500, 620],
+      large_div: [210, 300, 390, 500, 620],
+      large_mix: [240, 330, 420, 530, 650],
+      row_mul:   [120, 180, 240, 300, 390],
+      row_div:   [120, 180, 240, 300, 390]
+    }[modeKey] || [180, 240, 300, 360, 450];
 
     let timeScore;
     let timeText;
-    if (finalSeconds <= timeThresholds[0]) {
-      timeScore = 100;
-      timeText = 'sehr schnell ⚡';
-    } else if (finalSeconds <= timeThresholds[1]) {
-      timeScore = 92;
-      timeText = 'schnell 😊';
-    } else if (finalSeconds <= timeThresholds[2]) {
-      timeScore = 82;
-      timeText = 'gut im Tempo 👍';
-    } else if (finalSeconds <= timeThresholds[3]) {
-      timeScore = 72;
-      timeText = 'ordentlich ⏱️';
-    } else if (finalSeconds <= timeThresholds[4]) {
-      timeScore = 58;
-      timeText = 'noch okay 🙂';
-    } else {
-      timeScore = 40;
-      timeText = 'eher langsam, aber geschafft 💪';
-    }
+    if (finalSeconds <= timeThresholds[0]) { timeScore = 100; timeText = 'sehr schnell ⚡'; }
+    else if (finalSeconds <= timeThresholds[1]) { timeScore = 92; timeText = 'schnell 😊'; }
+    else if (finalSeconds <= timeThresholds[2]) { timeScore = 82; timeText = 'gut im Tempo 👍'; }
+    else if (finalSeconds <= timeThresholds[3]) { timeScore = 72; timeText = 'ordentlich ⏱️'; }
+    else if (finalSeconds <= timeThresholds[4]) { timeScore = 58; timeText = 'noch okay 🙂'; }
+    else { timeScore = 40; timeText = 'eher langsam, aber geschafft 💪'; }
 
     const combined = Math.round(errorScore * 0.7 + timeScore * 0.3);
+
+    // Strengere Notengrenzen
     let grade;
-    if (combined >= 92) grade = 1;
-    else if (combined >= 81) grade = 2;
+    if (combined >= 97) grade = 1;
+    else if (combined >= 86) grade = 2;
     else if (combined >= 67) grade = 3;
     else if (combined >= 50) grade = 4;
-    else if (combined >= 30) grade = 5;
+    else if (combined >= 25) grade = 5;
     else grade = 6;
 
-    const modeBonus = { core: 0, small: 120, large: 280 }[modeKey];
+    const modeBonus = {
+      core: 0, core_div: 20, core_mix: 40,
+      small: 120, small_div: 140, small_mix: 170,
+      large: 280, large_div: 300, large_mix: 340,
+      row_mul: 60, row_div: 70
+    }[modeKey] || 0;
+
     const score = Math.max(0, Math.round(correct * 120 - finalSeconds * 2 - errors * 35 + combined * 12 + modeBonus));
 
     const texts = {
@@ -386,6 +486,7 @@
     };
   }
 
+  // ---------- Highscores ----------
   function storeHighscore(score, grade, finalSeconds, mode) {
     highscores[mode] ??= [];
     highscores[mode].push({
@@ -403,16 +504,20 @@
   }
 
   function sanitizeName(value) {
-    const cleaned = value.trim().replace(/s+/g, ' ');
+    const cleaned = value.trim().replace(/\s+/g, ' ');
     return cleaned || 'Anonym';
   }
 
   function loadHighscores() {
     try {
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-      return { core: parsed.core || [], small: parsed.small || [], large: parsed.large || [] };
+      const out = {};
+      Object.keys(MODES).forEach(k => { out[k] = parsed[k] || []; });
+      return out;
     } catch {
-      return { core: [], small: [], large: [] };
+      const out = {};
+      Object.keys(MODES).forEach(k => { out[k] = []; });
+      return out;
     }
   }
 
@@ -435,8 +540,9 @@
     `).join('');
   }
 
+  // ---------- View ----------
   function syncView() {
-    progressValue.textContent = `${Math.min(round.index, TOTAL_QUESTIONS)} / ${TOTAL_QUESTIONS}`;
+    progressValue.textContent = `${Math.min(round.index, round.totalQuestions)} / ${round.totalQuestions}`;
     timeValue.textContent = formatTime(round.elapsedSeconds);
     errorsValue.textContent = String(round.errors);
     penaltyValue.textContent = `${round.errors * PENALTY_SECONDS} s`;
