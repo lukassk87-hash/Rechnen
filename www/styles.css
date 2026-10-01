@@ -659,3 +659,59 @@ p {
     scroll-behavior: auto !important;
   }
 }
+
+/* Gezielte Reihe – Dropdown */
+.row-picker {
+  margin-top: var(--space-4);
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-purple) 10%, var(--color-surface-2) 90%);
+  border: 1px dashed var(--color-border);
+}
+
+.row-picker label {
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.row-picker select {
+  min-height: 3rem;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 2px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+/* Fokus-Sichtbarkeit für Mode-Karten verbessern */
+.mode-card:has(input:focus-visible) {
+  outline: 3px solid color-mix(in srgb, var(--color-blue) 80%, white 20%);
+  outline-offset: 2px;
+}
+
+/* Feedback im Dark Mode lesbar halten */
+.feedback.success {
+  color: var(--color-success);
+  background: color-mix(in srgb, var(--color-success) 14%, var(--color-surface) 86%);
+  border-style: solid;
+}
+
+.feedback.error {
+  color: var(--color-error);
+  background: color-mix(in srgb, var(--color-error) 12%, var(--color-surface) 88%);
+  border-style: solid;
+}
+
+/* Noten-Badges Dark-Mode-freundlich */
+.grade-1 { background: color-mix(in srgb, var(--color-success) 20%, var(--color-surface) 80%); color: var(--color-success); }
+.grade-2 { background: color-mix(in srgb, var(--color-blue) 20%, var(--color-surface) 80%); color: var(--color-blue); }
+.grade-3 { background: color-mix(in srgb, var(--color-warning) 22%, var(--color-surface) 78%); color: var(--color-warning); }
+.grade-4 { background: color-mix(in srgb, #ffb347 26%, var(--color-surface) 74%); color: #c76d00; }
+.grade-5 { background: color-mix(in srgb, var(--color-error) 20%, var(--color-surface) 80%); color: var(--color-error); }
+.grade-6 { background: color-mix(in srgb, #8b0000 30%, var(--color-surface) 70%); color: #ffb3b3; }
+
+[data-theme="dark"] .grade-4 { color: #ffca7a; }
+[data-theme="dark"] .eyebrow { color: var(--color-warning); background: color-mix(in srgb, var(--color-warning) 20%, var(--color-surface) 80%); }
