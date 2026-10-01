@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kernaufgaben 1×1 Trainer</title>
+  <title>1×1 Mathe-Trainer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
         <div class="logo" aria-hidden="true">🧮</div>
         <div class="brand-text">
           <strong>1×1 Mathe-Trainer</strong>
-          <span>Kernaufgaben, kleines 1×1 oder großes 1×1 🌟</span>
+          <span>Malnehmen, Teilen und Mischen – 1×1 bis 20 🌟</span>
         </div>
       </div>
       <button class="theme-toggle" type="button" data-theme-toggle aria-label="Modus wechseln">🌙</button>
@@ -29,9 +29,10 @@
         <article class="hero-main panel bounce-in">
           <div class="eyebrow">🚀 Rechnen mit Spaß</div>
           <h1>Wähle deinen Modus<br>und leg los! ✨</h1>
-          <p>Du kannst nur Kernaufgaben üben, alle Aufgaben aus dem kleinen 1×1 rechnen oder sogar das große 1×1 trainieren. Jede Runde hat 30 verschiedene Aufgaben, misst die Zeit und rechnet Fehler als Strafsekunden dazu.</p>
+          <p>Du kannst Kernaufgaben, kleines 1×1 oder großes 1×1 üben – jeweils als Malnehmen, Teilen oder gemischt. Zusätzlich kannst du eine gezielte Mal- oder Divisionsreihe trainieren. Jede Runde hat bis zu 30 verschiedene Aufgaben, misst die Zeit und rechnet Fehler als Strafsekunden dazu.</p>
           <div class="fun-badges" aria-label="Eigenschaften">
-            <div class="fun-badge">🎯 30 verschiedene Aufgaben</div>
+            <div class="fun-badge">🎯 bis zu 30 Aufgaben</div>
+            <div class="fun-badge">✖️ ➗ gemischt möglich</div>
             <div class="fun-badge">⏱️ Zeitmessung</div>
             <div class="fun-badge">➕ 10 Strafsekunden</div>
             <div class="fun-badge">🏆 Highscore mit Name</div>
@@ -41,30 +42,102 @@
         <aside class="hero-side panel">
           <div>
             <h2>Trainingsmodus 😊</h2>
-            <p>Standard ist der Kernaufgaben-Modus. Du kannst aber jederzeit auf alle Aufgaben des kleinen 1×1 oder auf das große 1×1 umschalten.</p>
+            <p>Standard ist Kernaufgaben Malnehmen. Du kannst jederzeit umschalten – auch auf Division oder gemischte Aufgaben.</p>
           </div>
 
           <div class="mode-grid" role="radiogroup" aria-label="Trainingsmodus wählen">
             <label class="mode-card active">
               <input type="radio" name="mode" value="core" checked />
               <span class="mode-icon">🌟</span>
-              <strong>Kernaufgaben</strong>
-              <small>nur ×1, ×2, ×5, ×10</small>
+              <strong>Kernaufgaben ×</strong>
+              <small>×1, ×2, ×5, ×10</small>
+            </label>
+
+            <label class="mode-card">
+              <input type="radio" name="mode" value="core_div" />
+              <span class="mode-icon">🌟</span>
+              <strong>Kernaufgaben ÷</strong>
+              <small>÷1, ÷2, ÷5, ÷10</small>
+            </label>
+
+            <label class="mode-card">
+              <input type="radio" name="mode" value="core_mix" />
+              <span class="mode-icon">🌈</span>
+              <strong>Kernaufgaben gemischt</strong>
+              <small>× und ÷ gemischt</small>
             </label>
 
             <label class="mode-card">
               <input type="radio" name="mode" value="small" />
               <span class="mode-icon">📘</span>
-              <strong>Kleines 1×1</strong>
-              <small>alle Aufgaben von 1 bis 10</small>
+              <strong>Kleines 1×1 ×</strong>
+              <small>1 bis 10</small>
+            </label>
+
+            <label class="mode-card">
+              <input type="radio" name="mode" value="small_div" />
+              <span class="mode-icon">📘</span>
+              <strong>Kleines 1×1 ÷</strong>
+              <small>1 bis 10</small>
+            </label>
+
+            <label class="mode-card">
+              <input type="radio" name="mode" value="small_mix" />
+              <span class="mode-icon">🌈</span>
+              <strong>Kleines 1×1 gemischt</strong>
+              <small>× und ÷ gemischt</small>
             </label>
 
             <label class="mode-card">
               <input type="radio" name="mode" value="large" />
               <span class="mode-icon">🔥</span>
-              <strong>Großes 1×1</strong>
-              <small>alle Aufgaben von 1 bis 20</small>
+              <strong>Großes 1×1 ×</strong>
+              <small>1 bis 20</small>
             </label>
+
+            <label class="mode-card">
+              <input type="radio" name="mode" value="large_div" />
+              <span class="mode-icon">🔥</span>
+              <strong>Großes 1×1 ÷</strong>
+              <small>1 bis 20</small>
+            </label>
+
+            <label class="mode-card">
+              <input type="radio" name="mode" value="large_mix" />
+              <span class="mode-icon">🌈</span>
+              <strong>Großes 1×1 gemischt</strong>
+              <small>× und ÷ gemischt</small>
+            </label>
+
+            <label class="mode-card">
+              <input type="radio" name="mode" value="row_mul" />
+              <span class="mode-icon">🎯</span>
+              <strong>Gezielte Malreihe</strong>
+              <small>eine Reihe üben</small>
+            </label>
+
+            <label class="mode-card">
+              <input type="radio" name="mode" value="row_div" />
+              <span class="mode-icon">🎯</span>
+              <strong>Gezielte Divisionsreihe</strong>
+              <small>eine Reihe üben</small>
+            </label>
+          </div>
+
+          <div class="row-picker" id="rowPicker" hidden>
+            <label for="rowSelect"><strong>Welche Reihe möchtest du üben?</strong></label>
+            <select id="rowSelect">
+              <option value="1">1er-Reihe</option>
+              <option value="2">2er-Reihe</option>
+              <option value="3">3er-Reihe</option>
+              <option value="4">4er-Reihe</option>
+              <option value="5">5er-Reihe</option>
+              <option value="6">6er-Reihe</option>
+              <option value="7">7er-Reihe</option>
+              <option value="8">8er-Reihe</option>
+              <option value="9">9er-Reihe</option>
+              <option value="10">10er-Reihe</option>
+            </select>
           </div>
         </aside>
       </section>
@@ -84,7 +157,7 @@
           <div class="status-row" aria-label="Aktueller Stand">
             <div class="status-pill">
               <span>Modus</span>
-              <strong id="modeValue">Kern</strong>
+              <strong id="modeValue">Kern ×</strong>
             </div>
             <div class="status-pill">
               <span>Aufgabe</span>
@@ -159,7 +232,7 @@
         <aside class="sidebar-stack">
           <section class="sidebar-card panel">
             <h2>Highscore 🏆</h2>
-            <p>Es gibt eine Bestenliste pro Modus. So bleiben Kernaufgaben, kleines 1×1 und großes 1×1 fair getrennt.</p>
+            <p>Es gibt eine Bestenliste pro Modus. So bleiben die Modi fair getrennt.</p>
             <div id="highscoreList" class="score-list" role="list"></div>
           </section>
 
@@ -167,9 +240,10 @@
             <h2>Modi 💡</h2>
             <p>Du kannst den Modus vor dem Start ändern. Während einer laufenden Runde bleibt der gewählte Modus fix.</p>
             <ul class="info-list" role="list">
-              <li class="info-item"><span aria-hidden="true">🌟</span><div><strong>Kernaufgaben</strong><small>nur ×1, ×2, ×5, ×10</small></div></li>
-              <li class="info-item"><span aria-hidden="true">📘</span><div><strong>Kleines 1×1</strong><small>alle Aufgaben von 1 bis 10</small></div></li>
-              <li class="info-item"><span aria-hidden="true">🔥</span><div><strong>Großes 1×1</strong><small>alle Aufgaben von 1 bis 20</small></div></li>
+              <li class="info-item"><span aria-hidden="true">🌟</span><div><strong>Kernaufgaben</strong><small>×1, ×2, ×5, ×10 – auch ÷ und gemischt</small></div></li>
+              <li class="info-item"><span aria-hidden="true">📘</span><div><strong>Kleines 1×1</strong><small>1 bis 10 – auch ÷ und gemischt</small></div></li>
+              <li class="info-item"><span aria-hidden="true">🔥</span><div><strong>Großes 1×1</strong><small>1 bis 20 – auch ÷ und gemischt</small></div></li>
+              <li class="info-item"><span aria-hidden="true">🎯</span><div><strong>Gezielte Reihe</strong><small>Mal oder Division – 1 bis 10</small></div></li>
             </ul>
           </section>
         </aside>
