@@ -18,220 +18,189 @@
         <div class="logo" aria-hidden="true">🧮</div>
         <div class="brand-text">
           <strong>1×1 Mathe-Trainer</strong>
-          <span>Malnehmen, Teilen, Mischen und Punkt vor Strich 🌟</span>
+          <span>Malnehmen · Teilen · Mischen · Punkt vor Strich</span>
         </div>
       </div>
       <button class="theme-toggle" type="button" data-theme-toggle aria-label="Modus wechseln">🌙</button>
     </header>
 
     <main id="main">
-      <section class="hero">
-        <article class="hero-main panel bounce-in">
-          <div class="eyebrow">🚀 Rechnen mit Spaß</div>
-          <h1>Wähle deinen Modus<br>und leg los! ✨</h1>
-          <p>Du kannst Kernaufgaben, kleines 1×1 oder großes 1×1 üben – jeweils als Malnehmen, Teilen oder gemischt. Zusätzlich kannst du eine gezielte Mal- oder Divisionsreihe trainieren oder Punkt-vor-Strich-Aufgaben lösen. Jede Runde hat bis zu 30 Aufgaben, misst die Zeit und rechnet Fehler als Strafsekunden dazu.</p>
-          <div class="fun-badges" aria-label="Eigenschaften">
-            <div class="fun-badge">🎯 bis zu 30 Aufgaben</div>
-            <div class="fun-badge">✖️ ➗ gemischt möglich</div>
-            <div class="fun-badge">🧠 Punkt vor Strich</div>
-            <div class="fun-badge">⏱️ Zeitmessung</div>
-            <div class="fun-badge">➕ 10 Strafsekunden</div>
-            <div class="fun-badge">🏆 Highscore mit Name</div>
+      <!-- Modus-Auswahl -->
+      <section class="panel mode-section" aria-labelledby="mode-title">
+        <div class="section-head">
+          <h2 id="mode-title">Modus wählen 🎯</h2>
+          <p class="muted">Änderungen sind nur vor dem Start möglich.</p>
+        </div>
+
+        <div class="mode-grid" role="radiogroup" aria-label="Trainingsmodus">
+          <label class="mode-card active">
+            <input type="radio" name="mode" value="core" checked />
+            <span class="mode-icon">🌟</span>
+            <strong>Kern ×</strong>
+            <small>×1, ×2, ×5, ×10</small>
+          </label>
+
+          <label class="mode-card">
+            <input type="radio" name="mode" value="core_div" />
+            <span class="mode-icon">🌟</span>
+            <strong>Kern ÷</strong>
+            <small>÷1, ÷2, ÷5, ÷10</small>
+          </label>
+
+          <label class="mode-card">
+            <input type="radio" name="mode" value="core_mix" />
+            <span class="mode-icon">🌈</span>
+            <strong>Kern gemischt</strong>
+            <small>× und ÷</small>
+          </label>
+
+          <label class="mode-card">
+            <input type="radio" name="mode" value="small" />
+            <span class="mode-icon">📘</span>
+            <strong>Klein ×</strong>
+            <small>1 bis 10</small>
+          </label>
+
+          <label class="mode-card">
+            <input type="radio" name="mode" value="small_div" />
+            <span class="mode-icon">📘</span>
+            <strong>Klein ÷</strong>
+            <small>1 bis 10</small>
+          </label>
+
+          <label class="mode-card">
+            <input type="radio" name="mode" value="small_mix" />
+            <span class="mode-icon">🌈</span>
+            <strong>Klein gemischt</strong>
+            <small>× und ÷</small>
+          </label>
+
+          <label class="mode-card">
+            <input type="radio" name="mode" value="large" />
+            <span class="mode-icon">🔥</span>
+            <strong>Groß ×</strong>
+            <small>1 bis 20</small>
+          </label>
+
+          <label class="mode-card">
+            <input type="radio" name="mode" value="large_div" />
+            <span class="mode-icon">🔥</span>
+            <strong>Groß ÷</strong>
+            <small>1 bis 20</small>
+          </label>
+
+          <label class="mode-card">
+            <input type="radio" name="mode" value="large_mix" />
+            <span class="mode-icon">🌈</span>
+            <strong>Groß gemischt</strong>
+            <small>× und ÷</small>
+          </label>
+
+          <label class="mode-card">
+            <input type="radio" name="mode" value="row_mul" />
+            <span class="mode-icon">🎯</span>
+            <strong>Malreihe</strong>
+            <small>gezielt üben</small>
+          </label>
+
+          <label class="mode-card">
+            <input type="radio" name="mode" value="row_div" />
+            <span class="mode-icon">🎯</span>
+            <strong>Divisionsreihe</strong>
+            <small>gezielt üben</small>
+          </label>
+
+          <label class="mode-card">
+            <input type="radio" name="mode" value="pvs" />
+            <span class="mode-icon">🧠</span>
+            <strong>Punkt vor Strich</strong>
+            <small>z. B. 3 + 3 × 6</small>
+          </label>
+        </div>
+
+        <div class="row-picker" id="rowPicker" hidden>
+          <label for="rowSelect"><strong>Welche Reihe?</strong></label>
+          <select id="rowSelect">
+            <option value="1">1er-Reihe</option>
+            <option value="2">2er-Reihe</option>
+            <option value="3">3er-Reihe</option>
+            <option value="4">4er-Reihe</option>
+            <option value="5">5er-Reihe</option>
+            <option value="6">6er-Reihe</option>
+            <option value="7">7er-Reihe</option>
+            <option value="8">8er-Reihe</option>
+            <option value="9">9er-Reihe</option>
+            <option value="10">10er-Reihe</option>
+          </select>
+        </div>
+
+        <!-- Highscore des aktuell gewählten Modus -->
+        <div class="mode-highscore">
+          <div class="section-head compact">
+            <h3>Highscore für diesen Modus 🏆</h3>
+            <span class="muted" id="modeValueBadge">Kern ×</span>
           </div>
-        </article>
-
-        <aside class="hero-side panel">
-          <div>
-            <h2>Trainingsmodus 😊</h2>
-            <p>Standard ist Kernaufgaben Malnehmen. Du kannst jederzeit umschalten – auch auf Division, gemischte Aufgaben oder Punkt vor Strich.</p>
-          </div>
-
-          <div class="mode-grid" role="radiogroup" aria-label="Trainingsmodus wählen">
-            <label class="mode-card active">
-              <input type="radio" name="mode" value="core" checked />
-              <span class="mode-icon">🌟</span>
-              <strong>Kernaufgaben ×</strong>
-              <small>×1, ×2, ×5, ×10</small>
-            </label>
-
-            <label class="mode-card">
-              <input type="radio" name="mode" value="core_div" />
-              <span class="mode-icon">🌟</span>
-              <strong>Kernaufgaben ÷</strong>
-              <small>÷1, ÷2, ÷5, ÷10</small>
-            </label>
-
-            <label class="mode-card">
-              <input type="radio" name="mode" value="core_mix" />
-              <span class="mode-icon">🌈</span>
-              <strong>Kernaufgaben gemischt</strong>
-              <small>× und ÷ gemischt</small>
-            </label>
-
-            <label class="mode-card">
-              <input type="radio" name="mode" value="small" />
-              <span class="mode-icon">📘</span>
-              <strong>Kleines 1×1 ×</strong>
-              <small>1 bis 10</small>
-            </label>
-
-            <label class="mode-card">
-              <input type="radio" name="mode" value="small_div" />
-              <span class="mode-icon">📘</span>
-              <strong>Kleines 1×1 ÷</strong>
-              <small>1 bis 10</small>
-            </label>
-
-            <label class="mode-card">
-              <input type="radio" name="mode" value="small_mix" />
-              <span class="mode-icon">🌈</span>
-              <strong>Kleines 1×1 gemischt</strong>
-              <small>× und ÷ gemischt</small>
-            </label>
-
-            <label class="mode-card">
-              <input type="radio" name="mode" value="large" />
-              <span class="mode-icon">🔥</span>
-              <strong>Großes 1×1 ×</strong>
-              <small>1 bis 20</small>
-            </label>
-
-            <label class="mode-card">
-              <input type="radio" name="mode" value="large_div" />
-              <span class="mode-icon">🔥</span>
-              <strong>Großes 1×1 ÷</strong>
-              <small>1 bis 20</small>
-            </label>
-
-            <label class="mode-card">
-              <input type="radio" name="mode" value="large_mix" />
-              <span class="mode-icon">🌈</span>
-              <strong>Großes 1×1 gemischt</strong>
-              <small>× und ÷ gemischt</small>
-            </label>
-
-            <label class="mode-card">
-              <input type="radio" name="mode" value="row_mul" />
-              <span class="mode-icon">🎯</span>
-              <strong>Gezielte Malreihe</strong>
-              <small>eine Reihe üben</small>
-            </label>
-
-            <label class="mode-card">
-              <input type="radio" name="mode" value="row_div" />
-              <span class="mode-icon">🎯</span>
-              <strong>Gezielte Divisionsreihe</strong>
-              <small>eine Reihe üben</small>
-            </label>
-
-            <label class="mode-card">
-              <input type="radio" name="mode" value="pvs" />
-              <span class="mode-icon">🧠</span>
-              <strong>Punkt vor Strich</strong>
-              <small>z. B. 3 + 3 × 6</small>
-            </label>
-          </div>
-
-          <div class="row-picker" id="rowPicker" hidden>
-            <label for="rowSelect"><strong>Welche Reihe möchtest du üben?</strong></label>
-            <select id="rowSelect">
-              <option value="1">1er-Reihe</option>
-              <option value="2">2er-Reihe</option>
-              <option value="3">3er-Reihe</option>
-              <option value="4">4er-Reihe</option>
-              <option value="5">5er-Reihe</option>
-              <option value="6">6er-Reihe</option>
-              <option value="7">7er-Reihe</option>
-              <option value="8">8er-Reihe</option>
-              <option value="9">9er-Reihe</option>
-              <option value="10">10er-Reihe</option>
-            </select>
-          </div>
-        </aside>
+          <div id="highscoreList" class="score-list" role="list"></div>
+        </div>
       </section>
 
-      <section class="layout" aria-label="Rechentrainer und Infos">
+      <!-- Trainer -->
+      <section class="layout" aria-label="Rechentrainer">
         <section class="quiz-card panel" aria-labelledby="trainer-title">
-          <h2 id="trainer-title">Dein Rundlauf ✨</h2>
-          <p id="modeDescription">Aktiv: Kernaufgaben mit ×1, ×2, ×5 und ×10.</p>
-
-          <div class="player-row">
-            <label class="name-field" for="playerName">
-              <span>Dein Name für den Highscore 🏷️</span>
-              <input id="playerName" type="text" maxlength="16" placeholder="z. B. Mia" autocomplete="nickname" />
-            </label>
+          <div class="section-head">
+            <h2 id="trainer-title">Runde ✨</h2>
+            <p class="muted" id="modeDescription">Kernaufgaben mit ×1, ×2, ×5, ×10.</p>
           </div>
 
-          <div class="status-row" aria-label="Aktueller Stand">
-            <div class="status-pill">
-              <span>Modus</span>
-              <strong id="modeValue">Kern ×</strong>
-            </div>
-            <div class="status-pill">
-              <span>Aufgabe</span>
-              <strong id="progressValue">0 / 30</strong>
-            </div>
-            <div class="status-pill">
-              <span>Zeit</span>
-              <strong id="timeValue">00:00</strong>
-            </div>
-            <div class="status-pill">
-              <span>Fehler</span>
-              <strong id="errorsValue">0</strong>
-            </div>
-            <div class="status-pill">
-              <span>Strafzeit</span>
-              <strong id="penaltyValue">0 s</strong>
-            </div>
+          <label class="name-field" for="playerName">
+            <span>Name für den Highscore 🏷️</span>
+            <input id="playerName" type="text" maxlength="16" placeholder="z. B. Mia" autocomplete="nickname" />
+          </label>
+
+          <div class="status-row">
+            <div class="status-pill"><span>Modus</span><strong id="modeValue">Kern ×</strong></div>
+            <div class="status-pill"><span>Aufgabe</span><strong id="progressValue">0 / 30</strong></div>
+            <div class="status-pill"><span>Zeit</span><strong id="timeValue">00:00</strong></div>
+            <div class="status-pill"><span>Fehler</span><strong id="errorsValue">0</strong></div>
+            <div class="status-pill"><span>Strafzeit</span><strong id="penaltyValue">0 s</strong></div>
           </div>
 
           <div class="question-wrap" id="questionWrap">
-            <div class="question-label">Aktuelle Aufgabe</div>
-            <div class="question" id="questionText">Drücke auf Start 🎈</div>
+            <div class="question-label">Aufgabe</div>
+            <div class="question" id="questionText">Start drücken 🎈</div>
 
             <form class="answer-form" id="answerForm" autocomplete="off">
               <label class="sr-only" for="answerInput">Antwort</label>
               <input id="answerInput" class="answer-input" type="number" inputmode="numeric" placeholder="Antwort" disabled />
-              <button class="primary-btn" id="submitBtn" type="submit" disabled>Antwort prüfen</button>
+              <button class="primary-btn" id="submitBtn" type="submit" disabled>Prüfen</button>
             </form>
 
             <div class="button-row">
-              <button class="secondary-btn" type="button" id="startBtn">Runde starten 🎉</button>
-              <button class="ghost-btn" type="button" id="restartBtn">Neu mischen 🔄</button>
+              <button class="secondary-btn" type="button" id="startBtn">Start 🎉</button>
+              <button class="ghost-btn" type="button" id="restartBtn">Neu 🔄</button>
             </div>
           </div>
 
-          <div class="feedback" id="feedbackBox" aria-live="polite">Bereit? Dann starte deine Mathe-Mission! 🌈</div>
+          <div class="feedback" id="feedbackBox" aria-live="polite">Bereit? Dann starte! 🌈</div>
 
           <section class="results" id="resultsBox" aria-live="polite">
-            <h2>Dein Ergebnis 🌟</h2>
-            <div id="gradeBadge" class="grade-badge grade-3">⭐ Note 3</div>
-
-            <div class="results-grid">
-              <div class="result-box">
-                <span>Reine Zeit</span>
-                <strong id="rawTimeResult">00:00</strong>
-              </div>
-              <div class="result-box">
-                <span>Zeit mit Strafsekunden</span>
-                <strong id="finalTimeResult">00:00</strong>
-              </div>
-              <div class="result-box">
-                <span>Richtige Antworten</span>
-                <strong id="correctResult">0 von 30</strong>
-              </div>
-              <div class="result-box">
-                <span>Highscore-Punkte</span>
-                <strong id="scoreResult">0</strong>
-              </div>
+            <div class="section-head">
+              <h2>Ergebnis 🌟</h2>
+              <div id="gradeBadge" class="grade-badge grade-3">⭐ Note 3</div>
             </div>
 
-            <div class="motivation" id="motivationText">Super gemacht! Weiter so! 💪</div>
-            <div class="note" id="gradingInfo">Bewertung: Fehler wiegen stärker als Zeit, aber schnelles Rechnen wird zusätzlich belohnt.</div>
+            <div class="results-grid">
+              <div class="result-box"><span>Reine Zeit</span><strong id="rawTimeResult">00:00</strong></div>
+              <div class="result-box"><span>Mit Strafzeit</span><strong id="finalTimeResult">00:00</strong></div>
+              <div class="result-box"><span>Richtig</span><strong id="correctResult">0 von 30</strong></div>
+              <div class="result-box"><span>Punkte</span><strong id="scoreResult">0</strong></div>
+            </div>
+
+            <div class="motivation" id="motivationText">Weiter so! 💪</div>
+            <div class="note" id="gradingInfo">Bewertung: Fehler 70 %, Zeit 30 %.</div>
 
             <section class="mistakes-box" id="mistakesBox">
               <h3>Zum Nachschauen 📝</h3>
-              <p>Hier siehst du alle Aufgaben, die noch nicht richtig waren.</p>
               <div id="mistakesList" class="mistakes-list"></div>
             </section>
           </section>
@@ -239,20 +208,16 @@
 
         <aside class="sidebar-stack">
           <section class="sidebar-card panel">
-            <h2>Highscore 🏆</h2>
-            <p>Es gibt eine Bestenliste pro Modus. So bleiben die Modi fair getrennt.</p>
-            <div id="highscoreList" class="score-list" role="list"></div>
-          </section>
-
-          <section class="sidebar-card panel">
-            <h2>Modi 💡</h2>
-            <p>Du kannst den Modus vor dem Start ändern. Während einer laufenden Runde bleibt der gewählte Modus fix.</p>
+            <div class="section-head compact">
+              <h2>Modi-Übersicht 💡</h2>
+            </div>
             <ul class="info-list" role="list">
-              <li class="info-item"><span aria-hidden="true">🌟</span><div><strong>Kernaufgaben</strong><small>×1, ×2, ×5, ×10 – auch ÷ und gemischt</small></div></li>
-              <li class="info-item"><span aria-hidden="true">📘</span><div><strong>Kleines 1×1</strong><small>1 bis 10 – auch ÷ und gemischt</small></div></li>
-              <li class="info-item"><span aria-hidden="true">🔥</span><div><strong>Großes 1×1</strong><small>1 bis 20 – auch ÷ und gemischt</small></div></li>
-              <li class="info-item"><span aria-hidden="true">🎯</span><div><strong>Gezielte Reihe</strong><small>Mal oder Division – 1 bis 10</small></div></li>
-              <li class="info-item"><span aria-hidden="true">🧠</span><div><strong>Punkt vor Strich</strong><small>Mal/Division zuerst, dann + oder −</small></div></li>
+              <li class="info-item"><span aria-hidden="true">🌟</span><div><strong>Kern</strong><small>×1, ×2, ×5, ×10</small></div></li>
+              <li class="info-item"><span aria-hidden="true">📘</span><div><strong>Klein</strong><small>1 bis 10</small></div></li>
+              <li class="info-item"><span aria-hidden="true">🔥</span><div><strong>Groß</strong><small>1 bis 20</small></div></li>
+              <li class="info-item"><span aria-hidden="true">🎯</span><div><strong>Reihe</strong><small>Mal oder Division</small></div></li>
+              <li class="info-item"><span aria-hidden="true">🧠</span><div><strong>Punkt vor Strich</strong><small>erst × / ÷, dann + / −</small></div></li>
+              <li class="info-item"><span aria-hidden="true">⏱️</span><div><strong>Strafzeit</strong><small>10 s pro Fehler</small></div></li>
             </ul>
           </section>
         </aside>
