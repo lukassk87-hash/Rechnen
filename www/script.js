@@ -2,23 +2,24 @@
   const TOTAL_QUESTIONS = 30;
   const PENALTY_SECONDS = 10;
   const HIGHSCORE_LIMIT = 5;
-  const STORAGE_KEY = 'math-trainer-highscores-v4';
+  const STORAGE_KEY = 'math-trainer-highscores-v5';
 
   const MODES = {
-    core:        { label: 'Kern ×',      title: 'Kernaufgaben ×',        description: 'Aktiv: Kernaufgaben mit ×1, ×2, ×5 und ×10.' },
-    core_div:    { label: 'Kern ÷',      title: 'Kernaufgaben ÷',        description: 'Aktiv: Kernaufgaben als Division mit ÷1, ÷2, ÷5 und ÷10.' },
-    core_mix:    { label: 'Kern gemischt', title: 'Kernaufgaben gemischt', description: 'Aktiv: Kernaufgaben gemischt – × und ÷ zufällig.' },
+    core:      { label: 'Kern ×',        title: 'Kernaufgaben ×',          description: 'Aktiv: Kernaufgaben mit ×1, ×2, ×5 und ×10.' },
+    core_div:  { label: 'Kern ÷',        title: 'Kernaufgaben ÷',          description: 'Aktiv: Kernaufgaben als Division mit ÷1, ÷2, ÷5 und ÷10.' },
+    core_mix:  { label: 'Kern gemischt', title: 'Kernaufgaben gemischt',   description: 'Aktiv: Kernaufgaben gemischt – × und ÷ zufällig.' },
 
-    small:       { label: 'Klein ×',     title: 'Kleines 1×1 ×',         description: 'Aktiv: alle Malaufgaben des kleinen 1×1 von 1 bis 10.' },
-    small_div:   { label: 'Klein ÷',     title: 'Kleines 1×1 ÷',         description: 'Aktiv: alle Divisionsaufgaben des kleinen 1×1 von 1 bis 10.' },
-    small_mix:   { label: 'Klein gemischt', title: 'Kleines 1×1 gemischt', description: 'Aktiv: kleines 1×1 gemischt – × und ÷ zufällig.' },
+    small:     { label: 'Klein ×',       title: 'Kleines 1×1 ×',           description: 'Aktiv: alle Malaufgaben des kleinen 1×1 von 1 bis 10.' },
+    small_div: { label: 'Klein ÷',       title: 'Kleines 1×1 ÷',           description: 'Aktiv: alle Divisionsaufgaben des kleinen 1×1 von 1 bis 10.' },
+    small_mix: { label: 'Klein gemischt', title: 'Kleines 1×1 gemischt',   description: 'Aktiv: kleines 1×1 gemischt – × und ÷ zufällig.' },
 
-    large:       { label: 'Groß ×',      title: 'Großes 1×1 ×',          description: 'Aktiv: alle Malaufgaben des großen 1×1 von 1 bis 20.' },
-    large_div:   { label: 'Groß ÷',      title: 'Großes 1×1 ÷',          description: 'Aktiv: alle Divisionsaufgaben des großen 1×1 von 1 bis 20.' },
-    large_mix:   { label: 'Groß gemischt', title: 'Großes 1×1 gemischt', description: 'Aktiv: großes 1×1 gemischt – × und ÷ zufällig.' },
+    large:     { label: 'Groß ×',        title: 'Großes 1×1 ×',            description: 'Aktiv: alle Malaufgaben des großen 1×1 von 1 bis 20.' },
+    large_div: { label: 'Groß ÷',        title: 'Großes 1×1 ÷',            description: 'Aktiv: alle Divisionsaufgaben des großen 1×1 von 1 bis 20.' },
+    large_mix: { label: 'Groß gemischt', title: 'Großes 1×1 gemischt',     description: 'Aktiv: großes 1×1 gemischt – × und ÷ zufällig.' },
 
-    row_mul:     { label: 'Reihe ×',     title: 'Gezielte Malreihe',     description: 'Aktiv: gezielte Malreihe mit dem gewählten Faktor (1–10), andere Faktoren zufällig 1–10.' },
-    row_div:     { label: 'Reihe ÷',     title: 'Gezielte Divisionsreihe', description: 'Aktiv: gezielte Divisionsreihe mit dem gewählten Divisor (1–10), Dividend zufällig 1× bis 10×.' }
+    row_mul:   { label: 'Reihe ×',       title: 'Gezielte Malreihe',       description: 'Aktiv: gezielte Malreihe mit dem gewählten Faktor (1–10), andere Faktoren zufällig 1–10.' },
+    row_div:   { label: 'Reihe ÷',       title: 'Gezielte Divisionsreihe', description: 'Aktiv: gezielte Divisionsreihe mit dem gewählten Divisor (1–10), Dividend zufällig 1× bis 10×.' },
+    pvs:       { label: 'PvS',           title: 'Punkt vor Strich',         description: 'Aktiv: Punkt vor Strich – erst Mal oder Division, dann Plus oder Minus. Ergebnis immer positiv.' }
   };
 
   // ---------- Theme ----------
@@ -158,7 +159,11 @@
   }
 
   function buildCoreMul() {
-    return uniqueTasks(buildMultiplicationBank(1, 10).filter(t => [1, 2, 5, 10].includes(t.b) || [1, 2, 5, 10].includes(t.a)));
+    return uniqueTasks(
+      buildMultiplicationBank(1, 10).filter(t =>
+        [1, 2, 5, 10].includes(t.b) || [1, 2, 5, 10].includes(t.a)
+      )
+    );
   }
   function buildCoreDiv() {
     return uniqueTasks(buildDivisionBank(1, 10).filter(t => [1, 2, 5, 10].includes(t.b)));
@@ -167,7 +172,6 @@
     return uniqueTasks([...buildCoreMul(), ...buildCoreDiv()]);
   }
 
-  // Gezielte Reihe: jede Aufgabe enthält min. 1× den Faktor
   function buildRowMul(row) {
     const tasks = [];
     for (let n = 1; n <= 10; n += 1) {
@@ -185,10 +189,53 @@
     return uniqueTasks(tasks);
   }
 
+  // Punkt vor Strich: a × b ± c  oder  c ± a × b  (auch mit Division)
+  // Werte: Mal/Division aus kleinem 1×1 (1–10), c aus 1–20, Ergebnis >= 0.
+  function buildPointBeforeLineBank() {
+    const tasks = [];
+
+    for (let a = 1; a <= 10; a += 1) {
+      for (let b = 1; b <= 10; b += 1) {
+        const mul = a * b;
+        for (let c = 1; c <= 20; c += 1) {
+          tasks.push({ a, b, c, answer: mul + c, op: 'pvs', form: 'mul_add_after' });
+          tasks.push({ a, b, c, answer: mul + c, op: 'pvs', form: 'add_before_mul' });
+          if (mul - c >= 0) {
+            tasks.push({ a, b, c, answer: mul - c, op: 'pvs', form: 'mul_sub_after' });
+          }
+          if (c - mul >= 0) {
+            tasks.push({ a, b, c, answer: c - mul, op: 'pvs', form: 'sub_before_mul' });
+          }
+        }
+      }
+    }
+
+    for (let b = 1; b <= 10; b += 1) {
+      for (let q = 1; q <= 10; q += 1) {
+        const a = b * q;   // Dividend
+        const div = q;     // Divisionsergebnis
+        for (let c = 1; c <= 20; c += 1) {
+          tasks.push({ a, b, c, answer: div + c, op: 'pvs', form: 'div_add_after' });
+          tasks.push({ a, b, c, answer: div + c, op: 'pvs', form: 'add_before_div' });
+          if (div - c >= 0) {
+            tasks.push({ a, b, c, answer: div - c, op: 'pvs', form: 'div_sub_after' });
+          }
+          if (c - div >= 0) {
+            tasks.push({ a, b, c, answer: c - div, op: 'pvs', form: 'sub_before_div' });
+          }
+        }
+      }
+    }
+
+    return uniqueTasks(tasks);
+  }
+
   function uniqueTasks(tasks) {
     const seen = new Set();
     return tasks.filter(task => {
-      const key = `${task.a}${task.op}${task.b}`;
+      const key = task.op === 'pvs'
+        ? `${task.form}-${task.a}-${task.b}-${task.c}`
+        : `${task.a}${task.op}${task.b}`;
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
@@ -208,6 +255,7 @@
       case 'large_mix': return buildMixedBank(1, 20);
       case 'row_mul':   return buildRowMul(row);
       case 'row_div':   return buildRowDiv(row);
+      case 'pvs':       return buildPointBeforeLineBank();
       default:          return buildCoreMul();
     }
   }
@@ -314,6 +362,20 @@
 
   function formatTask(task) {
     if (task.op === 'div') return `${task.a} ÷ ${task.b} = ?`;
+    if (task.op === 'mul') return `${task.a} × ${task.b} = ?`;
+    if (task.op === 'pvs') {
+      const { a, b, c, form } = task;
+      switch (form) {
+        case 'mul_add_after':  return `${a} × ${b} + ${c} = ?`;
+        case 'add_before_mul': return `${c} + ${a} × ${b} = ?`;
+        case 'mul_sub_after':  return `${a} × ${b} − ${c} = ?`;
+        case 'sub_before_mul': return `${c} − ${a} × ${b} = ?`;
+        case 'div_add_after':  return `${a} ÷ ${b} + ${c} = ?`;
+        case 'add_before_div': return `${c} + ${a} ÷ ${b} = ?`;
+        case 'div_sub_after':  return `${a} ÷ ${b} − ${c} = ?`;
+        case 'sub_before_div': return `${c} − ${a} ÷ ${b} = ?`;
+      }
+    }
     return `${task.a} × ${task.b} = ?`;
   }
 
@@ -329,6 +391,8 @@
     }
 
     const value = Number(raw);
+    const taskLabel = formatTask(current).replace(' = ?', '');
+
     if (value === current.answer) {
       round.correct += 1;
       feedback(randomFrom([
@@ -343,11 +407,11 @@
     } else {
       round.errors += 1;
       round.mistakes.push({
-        task: formatTask(current).replace(' = ?', ''),
+        task: taskLabel,
         correctAnswer: current.answer,
         givenAnswer: raw
       });
-      feedback(`Fast! ${formatTask(current).replace(' = ?', '')} = ${current.answer}. Weiter geht's! 💛`, 'error');
+      feedback(`Fast! ${taskLabel} = ${current.answer}. Weiter geht's! 💛`, 'error');
       questionWrap.classList.remove('shake');
       void questionWrap.offsetWidth;
       questionWrap.classList.add('shake');
@@ -434,7 +498,8 @@
       large_div: [210, 300, 390, 500, 620],
       large_mix: [240, 330, 420, 530, 650],
       row_mul:   [120, 180, 240, 300, 390],
-      row_div:   [120, 180, 240, 300, 390]
+      row_div:   [120, 180, 240, 300, 390],
+      pvs:       [150, 220, 290, 360, 460]
     }[modeKey] || [180, 240, 300, 360, 450];
 
     let timeScore;
@@ -461,7 +526,8 @@
       core: 0, core_div: 20, core_mix: 40,
       small: 120, small_div: 140, small_mix: 170,
       large: 280, large_div: 300, large_mix: 340,
-      row_mul: 60, row_div: 70
+      row_mul: 60, row_div: 70,
+      pvs: 90
     }[modeKey] || 0;
 
     const score = Math.max(0, Math.round(correct * 120 - finalSeconds * 2 - errors * 35 + combined * 12 + modeBonus));
